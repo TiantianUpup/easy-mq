@@ -4,9 +4,12 @@ import com.h2t.study.dto.Message;
 import com.h2t.study.enums.ErrorCodeEnum;
 import com.h2t.study.exception.MqException;
 import com.h2t.study.utils.JedisUtil;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
+
+import javax.xml.ws.BindingType;
 
 /**
  * MqConsumer
@@ -16,6 +19,7 @@ import redis.clients.jedis.Jedis;
  * @Date 2021/01/23 14:32
  */
 @Slf4j
+@Builder
 public class MqConsumer {
     /**
      * 消费消息
