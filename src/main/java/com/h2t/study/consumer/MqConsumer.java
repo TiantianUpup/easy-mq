@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
 import javax.xml.ws.BindingType;
+import java.util.List;
 
 /**
  * MqConsumer
@@ -27,15 +28,15 @@ public class MqConsumer {
      * @param message
      * @return
      */
-    public String consume(Message message) {
+    public List<String> consume(Message message) {
         //参数校验
         if (StringUtils.isBlank(message.getKey())) {
             log.error("consume message param error, message key is blank");
             throw new MqException(ErrorCodeEnum.TNP1001000);
         }
         Jedis jedis = JedisUtil.getJedis();
-        String msg = jedis.rpop(message.getKey());
-        log.info("consume message successfully, key is:{}, message is:{}", message.getKey(), message.getMsg());
-        return msg;
+        List<String> msgList = jedis.brpop(message.getKey());
+        log.info("consume message successfully, key is:{}, message list is:{}", message.getKey(), message.getMsg());
+        return msgList;
     }
 }
