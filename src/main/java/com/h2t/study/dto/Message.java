@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * TODO Description
+ * Message DTO
  *
  * @author hetiantian
  * @version 1.0
