@@ -1,5 +1,6 @@
 package com.h2t.study.consumer;
 
+import com.h2t.study.dto.CustomJedisPubSub;
 import com.h2t.study.dto.Message;
 import com.h2t.study.enums.ErrorCodeEnum;
 import com.h2t.study.exception.MqException;
@@ -47,6 +48,20 @@ public class MqConsumer {
         log.info("consume message successfully, key is:{}, message list is:{}", message.getKey(), message.getMsg());
         return msgList;
     }
+
+    /**
+     * 消费消息【订阅模式】
+     *
+     * @param message
+     */
+    public void sConsume(Message message) {
+        //参数校验
+        validateMessageKey(message);
+        Jedis jedis = JedisUtil.getJedis();
+        jedis.subscribe(new CustomJedisPubSub(), message.getKey());
+        log.info("consume message successfully, key is:{}, message list is:{}", message.getKey(), message.getMsg());
+    }
+
 
     /**
      * 参数校验

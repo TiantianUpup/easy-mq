@@ -28,14 +28,32 @@ public class MqProducer {
      */
     public void send(Message message) {
         //参数校验
+        validateMessage(message);
+
+        Jedis jedis = JedisUtil.getJedis();
+        Long size = jedis.lpush(message.getKey(), message.getMsg());
+        log.info("producer send msg successfully, msgKey is:{}, msg is:{}", message.getKey(), message.getMsg());
+    }
+
+    /**
+     * 发送消息【订阅模式】
+     *
+     * @param message
+     */
+    public void pSend(Message message) {
+        //参数校验
+        validateMessage(message);
+
+        Jedis jedis = JedisUtil.getJedis();
+        Long size = jedis.publish(message.getKey(), message.getMsg());
+        log.info("producer send msg successfully, msgKey is:{}, msg is:{}", message.getKey(), message.getMsg());
+    }
+
+    private void validateMessage(Message message) {
         if (StringUtils.isBlank(message.getKey())
                 || StringUtils.isBlank(message.getMsg())) {
             log.error("produce message param error, message key or msg is blank, message:{}", message);
             throw new MqException(ErrorCodeEnum.TNP1001000);
         }
-
-        Jedis jedis = JedisUtil.getJedis();
-        Long size = jedis.lpush(message.getKey(), message.getMsg());
-        log.info("producer send msg successfully, msgKey is:{}, msg is:{}", message.getKey(), message.getMsg());
     }
 }
