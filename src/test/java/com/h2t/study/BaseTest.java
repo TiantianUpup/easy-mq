@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BaseTest {
@@ -28,7 +26,7 @@ public class BaseTest {
 			.build();
 		mqProducer.send(message1);
 		mqProducer.send(message2);
-		System.out.println(mqConsumer.consume(Message.builder().key("test1").build()));
+		System.out.println(mqConsumer.bConsume(Message.builder().key("test1").build()));
 	}
 
 }

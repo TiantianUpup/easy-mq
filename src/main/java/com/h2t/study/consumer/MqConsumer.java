@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import redis.clients.jedis.Jedis;
 
-import javax.xml.ws.BindingType;
 import java.util.List;
 
 /**
@@ -23,20 +22,41 @@ import java.util.List;
 @Builder
 public class MqConsumer {
     /**
-     * 消费消息
+     * 非阻塞式消费消息
+     */
+    public String Consume(Message message) {
+        //参数校验
+        validateMessageKey(message);
+        Jedis jedis = JedisUtil.getJedis();
+        String msg = jedis.rpop(message.getKey());
+        log.info("consume message successfully, key is:{}, message list is:{}", message.getKey(), message.getMsg());
+        return msg;
+    }
+
+    /**
+     * 阻塞式消费消息
      *
      * @param message
      * @return
      */
-    public List<String> consume(Message message) {
+    public List<String> bConsume(Message message) {
         //参数校验
-        if (StringUtils.isBlank(message.getKey())) {
-            log.error("consume message param error, message key is blank");
-            throw new MqException(ErrorCodeEnum.TNP1001000);
-        }
+        validateMessageKey(message);
         Jedis jedis = JedisUtil.getJedis();
         List<String> msgList = jedis.brpop(message.getKey());
         log.info("consume message successfully, key is:{}, message list is:{}", message.getKey(), message.getMsg());
         return msgList;
+    }
+
+    /**
+     * 参数校验
+     *
+     * @param message
+     */
+    private void validateMessageKey(Message message) {
+        if (StringUtils.isBlank(message.getKey())) {
+            log.error("consume message param error, message key is blank");
+            throw new MqException(ErrorCodeEnum.TNP1001000);
+        }
     }
 }
